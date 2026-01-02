@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wall Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="300"> <!-- 5 minute auto-refresh -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%); 
+            color: #fff; 
+            height: 100vh; 
+            overflow: hidden;
+        }
+        .dashboard { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            grid-template-rows: auto 1fr auto; 
+            gap: 15px; 
+            padding: 15px; 
+            height: 100vh;
+        }
+        .widget { 
+            background: rgba(255,255,255,0.05); 
+            backdrop-filter: blur(10px); 
+            border-radius: 16px; 
+            padding: 20px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .full-width { grid-column: 1 / -1; }
+        .header { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-bottom: 15px; 
+            color: #4285f4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        iframe { 
+            width: 100%; 
+            height: 220px; 
+            border: none; 
+            border-radius: 12px; 
+            background: #111;
+        }
+        .clocks-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            height: 200px;
+        }
+        .clock { 
+            background: rgba(66,133,244,0.2); 
+            border-radius: 12px; 
+            padding: 12px; 
+            text-align: center;
+        }
+        .clock-time { 
+            font-size: 28px; 
+            font-weight: 700; 
+            margin: 5px 0;
+            color: #fff;
+        }
+        .clock-city { 
+            font-size: 12px; 
+            opacity: 0.8; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn { 
+            background: linear-gradient(135deg, #4285f4, #34a853); 
+            color: white; 
+            border: none; 
+            padding: 12px 16px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            width: 100%; 
+            margin: 6px 0; 
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- TOP ROW: Weather + World Clocks -->
+        <div class="widget">
+            <div class="header">🌤️ Weather (Montreal)</div>
+            <iframe src="https://weather.com/weather/today/l/CAXX0345:1:CA"></iframe>
+        </div>
+        
+        <div class="widget">
+            <div class="header">🌍 World Clocks</div>
+            <div class="clocks-grid">
+                <div class="clock" id="vancouver">
+                    <div class="clock-city">Vancouver</div>
+                    <div class="clock-time" id="vanc-time">--:--</div>
+                </div>
+                <div class="clock" id="marrakesh">
+                    <div class="clock-city">Marrakesh</div>
+                    <div class="clock-time" id="marr-time">--:--</div>
+                </div>
+                <div class="clock" id="berlin">
+                    <div class="clock-city">Berlin</div>
+                    <div class="clock-time" id="berl-time">--:--</div>
+                </div>
+                <div class="clock" id="tokyo">
+                    <div class="clock-city">Tokyo</div>
+                    <div class="clock-time" id="tokyo-time">--:--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MIDDLE ROW: Gemini AI (Full Width) -->
+        <div class="widget full-width">
+            <div class="header">🤖 Gemini AI Assistant</div>
+            <iframe src="https://gemini.google.com/app" height="280" style="height: 280px;"></iframe>
+        </div>
+
+        <!-- BOTTOM ROW: News + Controls -->
+        <div class="widget">
+            <div class="header">📰 News</div>
+            <iframe src="https://news.google.com/home?hl=en-CA&gl=CA&ceid=CA:en" height="200"></iframe>
+        </div>
+        
+        <div class="widget">
+            <div class="header">🎵 Quick Controls</div>
+            <button class="btn" onclick="window.open('https://music.youtube.com', '_blank')">YouTube Music</button>
+            <button class="btn" onclick="window.open('https://home.google.com', '_blank')">Google Home</button>
+            <button class="btn" onclick="window.open('https://calendar.google.com', '_blank')">Calendar</button>
+        </div>
+    </div>
+
+    <script>
+        // Live World Clocks
+        const timezones = {
+            vanc: 'America/Vancouver',
+            marr: 'Africa/Casablanca', 
+            berl: 'Europe/Berlin',
+            tokyo: 'Asia/Tokyo'
+        };
+
+        function updateClocks() {
+            Object.entries(timezones).forEach(([id, tz]) => {
+                const now = new Date().toLocaleString('en-US', { 
+                    timeZone: tz, 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
+                });
+                document.getElementById(id + '-time').textContent = now;
+            });
+        }
+
+        // Update every 30 seconds (faster than page refresh for clocks)
+        updateClocks();
+        setInterval(updateClocks, 30000);
+    </script>
+</body>
+</html>
